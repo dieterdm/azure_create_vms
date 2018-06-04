@@ -1,0 +1,39 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+      storage_account_name: "ansibleworkshop"
+      virtual_network_name: "ansibleworkshop"
+      resource_group: "ansibleworkshop"
+      location: "westeurope"
+
+  tasks:
+
+  - fail:
+      msg: "Thou shall not try and remove the Tower installation!"
+    when: vm_name | search("tower")
+
+  - name: Destroy VMs
+    azure_rm_virtualmachine:
+      name: "{{ vm_name }}"
+      resource_group: "{{ resource_group }}"
+      location: "{{ location }}"
+      storage_account_name: "{{ storage_account_name }}"
+      virtual_network_name: "{{ virtual_network_name }}"
+      state: absent
+      subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
+      secret: "{{ lookup('env', 'AZURE_SECRET') }}"
+      tenant: "{{ lookup('env', 'AZURE_TENANT') }}"
+      client_id: "{{ lookup('env', 'AZURE_CLIENT_ID') }}"
+    delegate_to: localhost
+
+  - name: Remove NSG
+    azure_rm_securitygroup:
+      name: "{{ vm_name }}01"
+      resource_group: "{{ resource_group }}"
+      state: absent
+      subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
+      secret: "{{ lookup('env', 'AZURE_SECRET') }}"
+      tenant: "{{ lookup('env', 'AZURE_TENANT') }}"
+      client_id: "{{ lookup('env', 'AZURE_CLIENT_ID') }}"
+    delegate_to: localhost

@@ -1,0 +1,62 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+      storage_account_name: "ansibleworkshop"
+      virtual_network_name: "ansibleworkshop"
+      virtual_subnet_name: "ansiblehandson"
+      rhel7_version: "7.3.2017032021"
+      resource_group: "ansibleworkshop"
+      location: "westeurope"
+      vm_size: "Standard_F2s_v2"
+      rhel_sku: "7.3"
+
+  tasks:
+
+  - fail:
+      msg: "Thou shall not try and create more Tower nodes!"
+    when: vm_name | search("tower")
+
+  - name: Create virtual network inteface card
+    azure_rm_networkinterface:
+      resource_group: "{{ resource_group }}"
+      name: "{{ vm_name }}"
+      virtual_network: "{{ virtual_network_name }}"
+      subnet_name: "{{ virtual_subnet_name }}"
+      public_ip: False
+      subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
+      secret: "{{ lookup('env', 'AZURE_SECRET') }}"
+      tenant: "{{ lookup('env', 'AZURE_TENANT') }}"
+      client_id: "{{ lookup('env', 'AZURE_CLIENT_ID') }}"
+
+  - name: Create VMs
+    azure_rm_virtualmachine:
+      name: "{{ vm_name }}"
+      resource_group: "{{ resource_group }}"
+      location: "{{ location }}"
+      vm_size: "{{ vm_size }}"
+      network_interfaces: "{{ vm_name }}"
+      open_ports: 
+        - 22
+        - 80
+        - 9090
+      image:
+        offer: RHEL
+        publisher: RedHat
+        sku: "{{ rhel_sku }}"
+        version: "{{ rhel7_version }}"
+      admin_username: "{{ admin_user }}"
+      admin_password: "{{ admin_password }}"
+      ssh_password_enabled: True
+      storage_account_name: "{{ storage_account_name }}"
+      virtual_network_name: "{{ virtual_network_name }}"
+      state: present
+      subscription_id: "{{ lookup('env','AZURE_SUBSCRIPTION_ID') }}"
+      secret: "{{ lookup('env', 'AZURE_SECRET') }}"
+      tenant: "{{ lookup('env', 'AZURE_TENANT') }}"
+      client_id: "{{ lookup('env', 'AZURE_CLIENT_ID') }}"
+    delegate_to: localhost
+    register: azure_vm
+
+  - name: Display information
+    debug: var=azure_vm

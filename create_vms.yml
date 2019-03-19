@@ -35,7 +35,7 @@
       resource_group: "{{ resource_group }}"
       location: "{{ location }}"
       vm_size: "{{ vm_size }}"
-      network_interfaces: "{{ vm_name }}"
+      network_interfaces: "{{ vm_name }}_networkinterface"
       open_ports: 
         - 22
         - 80

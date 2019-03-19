@@ -5,11 +5,11 @@
       storage_account_name: "ansibleworkshop"
       virtual_network_name: "ansibleworkshop"
       virtual_subnet_name: "ansiblehandson"
-      rhel7_version: "7.3.2017032021"
+      rhel7_version: "7.5.2018081519"
       resource_group: "ansibleworkshop"
       location: "westeurope"
       vm_size: "Standard_F2s_v2"
-      rhel_sku: "7.3"
+      rhel_sku: "7.5"
 
   tasks:
 

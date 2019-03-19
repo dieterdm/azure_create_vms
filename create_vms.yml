@@ -55,6 +55,8 @@
       secret: "{{ lookup('env', 'AZURE_SECRET') }}"
       tenant: "{{ lookup('env', 'AZURE_TENANT') }}"
       client_id: "{{ lookup('env', 'AZURE_CLIENT_ID') }}"
+      tags: "{{ vm_name }}01"
+      append_tags: false
     delegate_to: localhost
     register: azure_vm
 
